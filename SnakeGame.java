@@ -37,17 +37,22 @@ public class SnakeGame {
         public GamePanel() {
             setBackground(new Color(50, 50, 50)); // Dark gray background
             setFocusable(true);
-            initSnake();
-            setupKeyListener();
             setupGameTimer();
+            setupKeyListener();
+            initSnake();
         }
 
         private void initSnake() {
+            // Restart the timer to avoid race conditions
+            if (gameTimer != null) {
+                gameTimer.stop();
+            }
+
             snake = new ArrayList<>();
-            // Starting snake: 3 segments facing right, near center
-            snake.add(new Point(8, 10));
-            snake.add(new Point(9, 10));
-            snake.add(new Point(10, 10));
+            // Starting snake: 3 segments facing right, well-separated horizontally
+            snake.add(new Point(5, 10));
+            snake.add(new Point(6, 10));
+            snake.add(new Point(7, 10));
             dirX = 1;
             dirY = 0;
             nextDirX = 1;
@@ -55,6 +60,9 @@ public class SnakeGame {
             score = 0;
             gameOver = false;
             spawnFood();
+
+            // Restart the timer
+            gameTimer.start();
         }
 
         private void setupKeyListener() {
@@ -167,6 +175,7 @@ public class SnakeGame {
                 newFood = new Point(x, y);
             } while (snake.contains(newFood));
             food = newFood;
+            repaint();  // Ensure food is drawn immediately
         }
 
         @Override
